@@ -1,4 +1,16 @@
-﻿List<Expense> myExpenses = new List<Expense>();
+﻿using System.Text.Json;
+
+List<Expense> myExpenses = new List<Expense>();
+
+string fileName = "expenses.json";
+
+// LOAD DATA
+if (File.Exists(fileName))
+{
+    string existingData = File.ReadAllText(fileName);
+    myExpenses = JsonSerializer.Deserialize<List<Expense>>(existingData);
+    Console.WriteLine("--- Previous Data loaded! ---");
+}
 
 Console.WriteLine("--- My Portfolio Expense Tracker ---");
 
@@ -37,7 +49,12 @@ while (true)
         string cat = Console.ReadLine();
 
         myExpenses.Add(new Expense { Description = desc, Amount = price, Category = cat });
-        Console.WriteLine("Expense Added!");
+
+        // SAVE DATA
+        string jsonData = JsonSerializer.Serialize(myExpenses);
+        File.WriteAllText(fileName, jsonData);
+        
+        Console.WriteLine("Expense Added and saved to disk!");
     }
     else if (choice == "2")
     {
